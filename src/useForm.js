@@ -27,8 +27,8 @@ const useForm = () => {
     });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = () => {
+    // e.preventDefault();
     setErrors(validateInfo(values));
   };
 

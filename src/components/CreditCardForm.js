@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import useForm from "../useForm";
 import { Button, Form, Alert, Row, Col } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -6,8 +6,20 @@ import "./CreditCardForm.css";
 import Cards from "react-credit-cards";
 import "react-credit-cards/es/styles-compiled.css";
 
-const CreditCardForm = () => {
+const CreditCardForm = ({ cards, setCards, setShowForm, setLastCardAdded }) => {
   const { handleChange, handleFocus, handleSubmit, values, errors } = useForm();
+
+  const onSubmitHandle = (e) => {
+    e.preventDefault();
+    handleSubmit();
+    console.log("error", errors);
+    if (Object.keys(errors).length === 0) {
+      console.log("values", values);
+      setLastCardAdded(values.cardNumber);
+      setCards([...cards, values]);
+      setShowForm(false);
+    }
+  };
 
   return (
     <div>
@@ -23,12 +35,12 @@ const CreditCardForm = () => {
                 number={values.cardNumber}
               />
             </div>
-            <Form onSubmit={handleSubmit}>
+            <Form onSubmit={onSubmitHandle}>
               <Form.Group>
                 <Form.Control
                   type="text"
                   onInput={(e) => {
-                    e.target.value = e.target.value.match("^[a-zA-Z-]*");
+                    e.target.value = e.target.value.match("^[a-zA-Z- ]*");
                   }}
                   id="cardName"
                   data-testid="cardName"
@@ -67,7 +79,7 @@ const CreditCardForm = () => {
                       data-testid="cardExpiration"
                       name="cardExpiration"
                       placeholder="Expiration Date (MM/YY)"
-                      pattern="^(0[1-9]|1[0-2])\/?([0-9]{2})$"
+                      pattern="^(0[1-9]|1[0-2])\/([0-9]{2})$"
                       value={values.cardExpiration}
                       onChange={handleChange}
                       onFocus={handleFocus}
@@ -104,7 +116,7 @@ const CreditCardForm = () => {
                 id="validateButton"
                 type="submit"
               >
-                Validate
+                Validate and Add
               </Button>
             </Form>
           </div>
